@@ -13,25 +13,17 @@ import TextField from '@mui/material/TextField';
 
 export default function Todos() {
   const [todos, setTodos] = useState<any>([])
-  const [dones, setDones] = useState<any>([])
   const [newTodo, setNewTodo] = useState<any>("")
   const initialTodos = [
-    {id: 1, title: "料理"},
-    {id: 2, title: "運動"},
-    {id: 3, title: "お買い物"},
-    {id: 4, title: "お風呂"},
-    {id: 5, title: "掃除"},
+    {id: 1, title: "料理", done_flag: false},
+    {id: 2, title: "運動", done_flag: false},
+    {id: 3, title: "お買い物", done_flag: false},
+    {id: 4, title: "お風呂", done_flag: false},
+    {id: 5, title: "掃除", done_flag: false},
   ]
-  const initialDones = [
-    {id: 1, title: "食器洗い"},
-    {id: 2, title: "仕事"},
-    {id: 3, title: "遊び"},
-    {id: 4, title: "お絵かき"},
-    {id: 5, title: "掃除"},
-  ]
+
   useEffect(() => {
     setTodos(initialTodos)
-    setDones(initialDones)
   }, [])
   
   const handleAddTodo = (newTitle: any) => {
@@ -42,28 +34,15 @@ export default function Todos() {
     setNewTodo("")
   }
 
-  const handleDoneTodo = (id: any, title: any) => {
-    const maxId = dones.length > 0 ? Math.max(...dones.map((done: { id: any; }) => done.id)) : 0;
-    const newId = maxId + 1;
-    const newDone = { id: newId, title: title };
-    setDones([...dones, newDone])
-    setTodos(todos.filter((todo: { id: any; }) => todo.id !== id));
+  const handleUpdateTodoDoneflag = (id: any) => {
+    const updatedTodos = todos.map((todo: { id: any; done_flag: any; }) => {
+      if (todo.id === id) return { ...todo, done_flag: !todo.done_flag };
+      return todo;
+    });
+    setTodos(updatedTodos);
   }
 
-  const handleDeleteTodo = (id: any) => {
-    setTodos(todos.filter((todo: { id: any; }) => todo.id !== id));
-  }
-
-  const handleDeleteDone = (id: any) => {
-    setDones(dones.filter((done: { id: any; }) => done.id !== id));
-  }
-  const handleReturnTodo = (id: any, title: any) => {
-    const maxId = todos.length > 0 ? Math.max(...todos.map((todo: { id: any; }) => todo.id)) : 0;
-    const newId = maxId + 1;
-    const newTodo = { id: newId, title: title };
-    setTodos([...todos, newTodo])
-    setDones(dones.filter((done: { id: any; }) => done.id !== id));
-  }
+  const handleDeleteTodo = (id: any) => setTodos(todos.filter((todo: { id: any; }) => todo.id !== id));
 
   return (
     <>
@@ -82,17 +61,19 @@ export default function Todos() {
             </Typography>
           </Grid>
           <List css={todoItemWrapStyle} component="ul">
-            {todos.map((todo: any, i: any) =>
+            {todos.map((todo: any, i: any) => (
+              !todo.done_flag ?
               <ListItem key={todo.id} css={todoItemStyle}>
                 <p css={todoTitleStyle}>
                   ID.{todo.id}：{todo.title}
                 </p>
                 <Box>
-                  <Button variant="contained" style={{ marginRight: "10px" }} color="success" onClick={() => handleDoneTodo(todo.id, todo.title)}>完了</Button>
+                  <Button variant="contained" style={{ marginRight: "10px" }} color="success" onClick={() => handleUpdateTodoDoneflag(todo.id)}>完了</Button>
                   <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
-            )}
+              : <></>
+            ))}
           </List>
         </Grid>
 
@@ -103,17 +84,19 @@ export default function Todos() {
             </Typography>
           </Grid>
           <List css={todoItemWrapStyle} component="ul">
-            {dones.map((done: any, i: any) =>
-              <ListItem key={done.id} css={doneItemStyle}>
+            {todos.map((todo: any, i: any) => (
+              todo.done_flag ?
+              <ListItem key={todo.id} css={doneItemStyle}>
                 <p css={doneTitleStyle}>
-                ID.{done.id}：{done.title}
+                ID.{todo.id}：{todo.title}
                 </p>
                 <Box>
-                  <Button variant="contained" style={{ marginRight: "10px" }} color="primary" onClick={() => handleReturnTodo(done.id, done.title)}>戻す</Button>
-                  <Button variant="contained" color="error" onClick={() => handleDeleteDone(done.id)}>削除</Button>
+                  <Button variant="contained" style={{ marginRight: "10px" }} color="primary" onClick={() => handleUpdateTodoDoneflag(todo.id)}>戻す</Button>
+                  <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
-            )}
+              : <></>
+            ))}
           </List>
         </Grid>
       </Grid>
