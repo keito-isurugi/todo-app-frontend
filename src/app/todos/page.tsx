@@ -32,17 +32,16 @@ export default function Todos() {
       });
   }
 
+  const changeTodoDoneFlag = (id: any, done_flag: any) => {
+    axios.put(`http://localhost:8080/todos/${id}/change_done_flag`, { done_flag })
+      .then((response: { data: any; }) => {
+        getTodos()
+      });
+  }
+
   useEffect(() => {
     getTodos()
   }, [])
-  
-  const handleUpdateTodoDoneflag = (id: any) => {
-    const updatedTodos = todos.map((todo: { id: any; done_flag: any; }) => {
-      if (todo.id === id) return { ...todo, done_flag: !todo.done_flag };
-      return todo;
-    });
-    setTodos(updatedTodos);
-  }
 
   const handleDeleteTodo = (id: any) => setTodos(todos.filter((todo: { id: any; }) => todo.id !== id));
 
@@ -70,7 +69,7 @@ export default function Todos() {
                   ID.{todo.id}：{todo.title}
                 </p>
                 <Box>
-                  <Button variant="contained" style={{ marginRight: "10px" }} color="success" onClick={() => handleUpdateTodoDoneflag(todo.id)}>完了</Button>
+                  <Button variant="contained" style={{ marginRight: "10px" }} color="success" onClick={() => changeTodoDoneFlag(todo.id, !todo.done_flg)}>完了</Button>
                   <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
@@ -92,7 +91,7 @@ export default function Todos() {
                 ID.{todo.id}：{todo.title}
                 </p>
                 <Box>
-                  <Button variant="contained" style={{ marginRight: "10px" }} color="primary" onClick={() => handleUpdateTodoDoneflag(todo.id)}>戻す</Button>
+                  <Button variant="contained" style={{ marginRight: "10px" }} color="primary" onClick={() => changeTodoDoneFlag(todo.id, !todo.done_flag)}>戻す</Button>
                   <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
