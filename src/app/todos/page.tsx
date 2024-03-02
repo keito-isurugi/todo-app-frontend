@@ -15,7 +15,7 @@ import axios from 'axios';
 
 export default function Todos() {
   const [todos, setTodos] = useState<any>([])
-  const [newTodo, setNewTodo] = useState<any>("")
+  const [title, setTitle] = useState<any>("")
 
   const getTodos = () => {
     axios.get('http://localhost:8080/todos')
@@ -24,18 +24,18 @@ export default function Todos() {
       });
   }
 
+  const registerTodo = () => {
+    axios.post('http://localhost:8080/todos', { title })
+      .then((response: { data: any; }) => {
+        setTitle("")
+        getTodos()
+      });
+  }
+
   useEffect(() => {
     getTodos()
   }, [])
   
-  const handleAddTodo = (newTitle: any) => {
-    const maxId = todos.length > 0 ? Math.max(...todos.map((todo: { id: any; }) => todo.id)) : 0;
-    const newId = maxId + 1;
-    const newTodo = { id: newId, title: newTitle };
-    setTodos([...todos, newTodo])
-    setNewTodo("")
-  }
-
   const handleUpdateTodoDoneflag = (id: any) => {
     const updatedTodos = todos.map((todo: { id: any; done_flag: any; }) => {
       if (todo.id === id) return { ...todo, done_flag: !todo.done_flag };
@@ -54,8 +54,8 @@ export default function Todos() {
         </Typography>
         <Grid css={todoWrapStyle} container alignItems='center' justifyContent='center' direction="column">
           <Box css={todoItemStyle}>
-              <TextField value={newTodo} onChange={(e) => setNewTodo(e.target.value)} style={{ marginRight: "40px" }}/>
-              <Button variant="contained" onClick={() => handleAddTodo(newTodo)}>追加</Button>
+              <TextField value={title} onChange={(e) => setTitle(e.target.value)} style={{ marginRight: "40px" }}/>
+              <Button variant="contained" onClick={() => registerTodo()}>追加</Button>
           </Box>
           <Grid container alignItems='center' justifyContent='space-between'>
             <Typography variant="h6">
