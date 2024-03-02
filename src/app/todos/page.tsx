@@ -11,20 +11,21 @@ import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
+import axios from 'axios';
 
 export default function Todos() {
   const [todos, setTodos] = useState<any>([])
   const [newTodo, setNewTodo] = useState<any>("")
-  const initialTodos = [
-    {id: 1, title: "料理", done_flag: false},
-    {id: 2, title: "運動", done_flag: false},
-    {id: 3, title: "お買い物", done_flag: false},
-    {id: 4, title: "お風呂", done_flag: false},
-    {id: 5, title: "掃除", done_flag: false},
-  ]
+
+  const getTodos = () => {
+    axios.get('http://localhost:8080/todos')
+      .then((response: { data: any; }) => {
+        setTodos(response.data);
+      });
+  }
 
   useEffect(() => {
-    setTodos(initialTodos)
+    getTodos()
   }, [])
   
   const handleAddTodo = (newTitle: any) => {
@@ -48,12 +49,12 @@ export default function Todos() {
   return (
     <>
        <Grid container alignItems='center' justifyContent='center' direction="column">
-        <Typography variant="h5" style={{marginBottom: "20px"}}>
+        <Typography variant="h5" style={{ marginBottom: "20px" }}>
           TODO APP
         </Typography>
         <Grid css={todoWrapStyle} container alignItems='center' justifyContent='center' direction="column">
           <Box css={todoItemStyle}>
-              <TextField value={newTodo} onChange={(e) => setNewTodo(e.target.value)}/>
+              <TextField value={newTodo} onChange={(e) => setNewTodo(e.target.value)} style={{ marginRight: "40px" }}/>
               <Button variant="contained" onClick={() => handleAddTodo(newTodo)}>追加</Button>
           </Box>
           <Grid container alignItems='center' justifyContent='space-between'>
@@ -63,7 +64,7 @@ export default function Todos() {
           </Grid>
           <List css={todoItemWrapStyle} component="ul">
             {todos.map((todo: any, i: any) => (
-              !todo.done_flag ?
+              !todo.done_flag &&
               <ListItem key={todo.id} css={todoItemStyle}>
                 <p css={todoTitleStyle}>
                   ID.{todo.id}：{todo.title}
@@ -73,7 +74,6 @@ export default function Todos() {
                   <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
-              : <></>
             ))}
           </List>
         </Grid>
@@ -86,7 +86,7 @@ export default function Todos() {
           </Grid>
           <List css={todoItemWrapStyle} component="ul">
             {todos.map((todo: any, i: any) => (
-              todo.done_flag ?
+              todo.done_flag &&
               <ListItem key={todo.id} css={doneItemStyle}>
                 <p css={doneTitleStyle}>
                 ID.{todo.id}：{todo.title}
@@ -96,7 +96,6 @@ export default function Todos() {
                   <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
-              : <></>
             ))}
           </List>
         </Grid>
