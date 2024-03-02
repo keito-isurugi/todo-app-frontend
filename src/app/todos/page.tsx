@@ -39,11 +39,16 @@ export default function Todos() {
       });
   }
 
+  const deleteTodo = (id: any) => {
+    axios.delete(`http://localhost:8080/todos/${id}`)
+      .then((response: { data: any; }) => {
+        getTodos()
+      });
+  }
+
   useEffect(() => {
     getTodos()
   }, [])
-
-  const handleDeleteTodo = (id: any) => setTodos(todos.filter((todo: { id: any; }) => todo.id !== id));
 
   return (
     <>
@@ -70,7 +75,7 @@ export default function Todos() {
                 </p>
                 <Box>
                   <Button variant="contained" style={{ marginRight: "10px" }} color="success" onClick={() => changeTodoDoneFlag(todo.id, !todo.done_flg)}>完了</Button>
-                  <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
+                  <Button variant="contained" color="error" onClick={() => deleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
             ))}
@@ -92,7 +97,7 @@ export default function Todos() {
                 </p>
                 <Box>
                   <Button variant="contained" style={{ marginRight: "10px" }} color="primary" onClick={() => changeTodoDoneFlag(todo.id, !todo.done_flag)}>戻す</Button>
-                  <Button variant="contained" color="error" onClick={() => handleDeleteTodo(todo.id)}>削除</Button>
+                  <Button variant="contained" color="error" onClick={() => deleteTodo(todo.id)}>削除</Button>
                 </Box>
               </ListItem>
             ))}
