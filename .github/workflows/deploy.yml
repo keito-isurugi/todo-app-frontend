@@ -43,15 +43,15 @@ jobs:
           docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
 
-      # - name: Update ECS service
-      #   id: update-service
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #   with:
-      #     cluster: your-ecs-cluster
-      #     service: your-ecs-service
-      #     image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      #     wait-for-service-stability: true
-      #   env:
-      #     AWS_REGION: <REGION>
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Update ECS service
+        id: update-service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          cluster: todo-app-frontend-cluster
+          service: todo-app-service
+          image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          wait-for-service-stability: true
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
