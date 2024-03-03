@@ -5,6 +5,7 @@ export default function Home() {
     <main>
       <h1>トップページ</h1>
       <Link href="/todos">TODO APP</Link>
+      <a href="https://nextjs.org/" target='_blank'>Next.js</a>
     </main>
   );
 }
