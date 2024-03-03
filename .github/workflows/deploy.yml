@@ -31,7 +31,7 @@ jobs:
 
       - name: Update ECS service
         id: update-service
-        uses: aws-actions/amazon-ecs-deploy-task@v2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           cluster: your-ecs-cluster
           service: your-ecs-service
