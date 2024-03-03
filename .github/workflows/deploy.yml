@@ -49,6 +49,7 @@ jobs:
         with:
           cluster: todo-app-frontend-cluster
           service: todo-app-service
+          task-definition: ${{ secrets.AWS_ECR_PUSH_ARN }}
           image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           wait-for-service-stability: true
         env:
