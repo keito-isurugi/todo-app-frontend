@@ -19,7 +19,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ECR_PUSH_ARN }}
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
 
       # ECR ログイン
       - uses: aws-actions/amazon-ecr-login@v1
