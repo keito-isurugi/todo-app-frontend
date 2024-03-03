@@ -25,6 +25,10 @@ jobs:
       - uses: aws-actions/amazon-ecr-login@v1
         id: login-ecr # outputs で参照するために id を設定
 
+      # キャッシュクリア
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       # Docker イメージを build・push する
       - name: build and push docker image to ecr
         env:
@@ -48,15 +52,15 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Update ECS service
-        id: update-service
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          cluster: your-ecs-cluster
-          service: your-ecs-service
-          image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          wait-for-service-stability: true
-        env:
-          AWS_REGION: <REGION>
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Update ECS service
+      #   id: update-service
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     cluster: your-ecs-cluster
+      #     service: your-ecs-service
+      #     image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     wait-for-service-stability: true
+      #   env:
+      #     AWS_REGION: <REGION>
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
