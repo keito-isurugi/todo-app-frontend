@@ -42,6 +42,7 @@ jobs:
         run: |
           docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+          echo "Built image ID: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}"
       
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -49,7 +50,7 @@ jobs:
         with:
           task-definition: ${{ secrets.AWS_ECS_TASK_DEFINITION }}
           container-name: "todo-app-container"
-          image: "hogehogehogehogehogehoge"
+          image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
