@@ -43,28 +43,19 @@ jobs:
           docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
       
-      # ECSタスクの更新
-      - name: Update ECS task definition
-        env:
-          CLUSTER_NAME: "todo-app-frontend-cluster"
-          SERVICE_NAME: "todo-app-service"
-          TASK_DEFINITION_FAMILY: "todo-app-frontend-definition"
-        run: |
-          aws ecs update-service \
-            --cluster $CLUSTER_NAME \
-            --service $SERVICE_NAME \
-            --task-definition $TASK_DEFINITION_FAMILY:$GITHUB_SHA
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
 
-      # - name: Update ECS service
-      #   id: update-service
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #   with:
-      #     cluster: todo-app-frontend-cluster
-      #     service: todo-app-service
-      #     task-definition: ${{ secrets.AWS_ECR_PUSH_ARN }}
-      #     image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      #     wait-for-service-stability: true
-      #   env:
-      #     AWS_REGION: ${{ secrets.AWS_REGION }}
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
