@@ -9,6 +9,8 @@ export default function Home() {
       <a href="https://nextjs.org/" target='_blank'>Next.js</a>
       <br />
       <a href="https://nextjs.org/" target='_blank'>Next.js</a>
+      <br />
+      <a href="https://nextjs.org/" target='_blank'>Next.js</a>
     </main>
   );
 }
