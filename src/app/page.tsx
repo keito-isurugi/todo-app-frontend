@@ -11,12 +11,6 @@ export default function Home() {
       <a href="https://ja.react.dev/blog/2023/03/16/introducing-react-dev" target='_blank'>React</a>
       <br />
       <a href="https://mui.com/" target='_blank'>MUI</a>
-      <br />
-      <a href="https://nextjs.org/" target='_blank'>Next.js</a>
-      <br />
-      <a href="https://ja.react.dev/blog/2023/03/16/introducing-react-dev" target='_blank'>React</a>
-      <br />
-      <a href="https://mui.com/" target='_blank'>MUI</a>
     </main>
   );
 }
