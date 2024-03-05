@@ -52,15 +52,15 @@ jobs:
           container-name: "todo-app-container"
           image: ${{ steps.build-image.outputs.image }}
       
-      - name: Get task definition ARN
-        id: get-task-def-arn
+      - name: Get latest task definition revision
+        id: get-latest-revision
         run: |
-          # JSON ファイルからタスク定義の ARN を取得
-          TASK_DEFINITION_ARN=$(jq -r '.family + ":" + .revision' .github/workflows/ecs/task-definition.json)
-          echo "TASK_DEFINITION_ARN=$TASK_DEFINITION_ARN" >> $GITHUB_ENV
+          LATEST_REVISION=$(aws ecs describe-task-definition --task-definition ${{ steps.task-def.outputs.task-definition }} --query 'taskDefinition.revision')
+          echo "Latest revision: $LATEST_REVISION"
+          echo "LATEST_REVISION=$LATEST_REVISION" >> $GITHUB_ENV
           echo "==============================="
-          echo $TASK_DEFINITION_ARN
-          echo TASK_DEFINITION_ARN
+          echo $LATEST_REVISION
+          echo LATEST_REVISION
           echo "==============================="
       # - name: Deploy Amazon ECS task definition
       #   env:
