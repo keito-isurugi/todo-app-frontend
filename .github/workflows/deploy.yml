@@ -56,7 +56,7 @@ jobs:
         id: get-task-def-arn
         run: |
           # JSON ファイルからタスク定義の ARN を取得
-          TASK_DEFINITION_ARN=$(jq -r '.family + ":" + (.taskDefinitionArn | split("/") | last)' .github/workflows/ecs/task-definition.json)
+          TASK_DEFINITION_ARN=$(jq -r '.family + ":" + (.taskDefinitionArn | tostring | split("/") | last)' .github/workflows/ecs/task-definition.json)
           echo "TASK_DEFINITION_ARN=$TASK_DEFINITION_ARN" >> $GITHUB_ENV
       # - name: Deploy Amazon ECS task definition
       #   env:
