@@ -52,16 +52,6 @@ jobs:
           container-name: "todo-app-container"
           image: ${{ steps.build-image.outputs.image }}
       
-      - name: Get latest task definition revision
-        id: get-latest-revision
-        run: |
-          LATEST_REVISION=$(aws ecs describe-task-definition --task-definition ${{ steps.task-def.outputs.task-definition }} --query 'taskDefinition.revision')
-          echo "Latest revision: $LATEST_REVISION"
-          echo "LATEST_REVISION=$LATEST_REVISION" >> $GITHUB_ENV
-          echo "==============================="
-          echo $LATEST_REVISION
-          echo LATEST_REVISION
-          echo "==============================="
       # - name: Deploy Amazon ECS task definition
       #   env:
       #     ECS_SERVICE: "todo-app-service"
@@ -73,15 +63,15 @@ jobs:
       #     cluster: ${{ env.ECS_CLUSTER }}
       #     wait-for-service-stability: true
 
-      - name: Deregister old task definitions
-        id: deregister-task-defs
+      - name: Deregister old task definition
         run: |
-          echo "Deregistering old task definitions..."
-          LATEST_REVISION=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN --query 'taskDefinition.revision')
+          # 以前のタスク定義を取得
+          OLD_TASK_DEFINITION=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }} --query 'services[0].taskDefinition' --output text)
+          # 以前のタスク定義を削除
+          aws ecs deregister-task-definition --task-definition $OLD_TASK_DEFINITION
           echo "==============================="
-          echo $LATEST_REVISION
-          echo LATEST_REVISION
+          echo $OLD_TASK_DEFINITION
+          echo OLD_TASK_DEFINITION
           echo "==============================="
-          # aws ecs list-task-definitions --family-prefix "todo-app-frontend-definition" --query "taskDefinitionArns[?revision!=`\"$LATEST_REVISION\"`]" --output text | xargs -I {} aws ecs deregister-task-definition --task-definition {}
 
         
