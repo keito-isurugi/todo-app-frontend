@@ -63,23 +63,10 @@ jobs:
       #     cluster: ${{ env.ECS_CLUSTER }}
       #     wait-for-service-stability: true
 
-      - name: Delete old task definitions
-        env:
-          ECS_SERVICE: "arn:aws:ecs:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:service/todo-app-service"
-          ECS_CLUSTER: "todo-app-frontend-cluster"
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          TASK_DEFINITION_FAMILY: "todo-app-frontend-definition"
+      - name: Deregister old task definitions
+        id: deregister-task-defs
         run: |
-          # 最新のタスク定義を取得
-          LATEST_TASK_DEFINITION_ARN=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }} --query "services[0].taskDefinition" --output text)
-      
-          # 最新以外のタスク定義を取得
-          OLD_TASK_DEFINITIONS=$(aws ecs list-task-definitions --family-prefix ${{ env.TASK_DEFINITION_FAMILY }} --query "taskDefinitionArns[?!=\`${LATEST_TASK_DEFINITION_ARN}\`]" --output json)
-      
-          # 取得したタスク定義を削除
-          for TASK_DEFINITION in $(echo ${OLD_TASK_DEFINITIONS} | jq -r '.[]'); do
-            aws ecs deregister-task-definition --task-definition ${TASK_DEFINITION}
-          done
+          echo "Deregistering old task definitions..."
+          LATEST_REVISION=$(aws ecs describe-task-definition --task-definition ${{ steps.task-def.outputs.task-definition }} --query 'taskDefinition.revision')
+          aws ecs list-task-definitions --family-prefix "todo-app-service" --query 'taskDefinitionArns[?revision!=`'$LATEST_REVISION'`]' --output text | xargs -I {} aws ecs deregister-task-definition --task-definition {}
         
