@@ -68,5 +68,5 @@ jobs:
         run: |
           echo "Deregistering old task definitions..."
           LATEST_REVISION=$(aws ecs describe-task-definition --task-definition ${{ steps.task-def.outputs.task-definition }} --query 'taskDefinition.revision')
-          aws ecs list-task-definitions --family-prefix "todo-app-service" --query 'taskDefinitionArns[?revision!=`'$LATEST_REVISION'`]' --output text | xargs -I {} aws ecs deregister-task-definition --task-definition {}
+          aws ecs list-task-definitions --family-prefix "ttodo-app-frontend-definition" --query 'taskDefinitionArns[?revision!=`'$LATEST_REVISION'`]' --output text | xargs -I {} aws ecs deregister-task-definition --task-definition {}
         
