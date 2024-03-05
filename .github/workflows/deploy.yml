@@ -51,7 +51,13 @@ jobs:
           task-definition: .github/workflows/ecs/task-definition.json
           container-name: "todo-app-container"
           image: ${{ steps.build-image.outputs.image }}
-
+      
+      - name: Get task definition ARN
+        id: get-task-def-arn
+        run: |
+          # JSON ファイルからタスク定義の ARN を取得
+          TASK_DEFINITION_ARN=$(jq -r '.family + ":" + (.taskDefinitionArn | split("/") | last)' .github/workflows/ecs/task-definition.json)
+          echo "TASK_DEFINITION_ARN=$TASK_DEFINITION_ARN" >> $GITHUB_ENV
       # - name: Deploy Amazon ECS task definition
       #   env:
       #     ECS_SERVICE: "todo-app-service"
@@ -67,7 +73,7 @@ jobs:
         id: deregister-task-defs
         run: |
           echo "Deregistering old task definitions..."
-          LATEST_REVISION=$(aws ecs describe-task-definition --task-definition ${{ steps.task-def.outputs.task-definition }} --query 'taskDefinition.revision')
+          LATEST_REVISION=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN --query 'taskDefinition.revision')
           echo "==============================="
           echo $LATEST_REVISION
           echo LATEST_REVISION
