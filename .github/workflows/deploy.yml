@@ -72,6 +72,6 @@ jobs:
           echo $LATEST_REVISION
           echo LATEST_REVISION
           echo "==============================="
-          aws ecs list-task-definitions --family-prefix "todo-app-frontend-definition" --query "taskDefinitionArns[?revision!=`\"$LATEST_REVISION\"`]" --output text | xargs -I {} aws ecs deregister-task-definition --task-definition {}
+          # aws ecs list-task-definitions --family-prefix "todo-app-frontend-definition" --query "taskDefinitionArns[?revision!=`\"$LATEST_REVISION\"`]" --output text | xargs -I {} aws ecs deregister-task-definition --task-definition {}
 
         
