@@ -53,6 +53,9 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
+        env:
+          ECS_SERVICE: "todo-app-service"
+          ECS_CLUSTER: "todo-app-frontend-cluster"
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
