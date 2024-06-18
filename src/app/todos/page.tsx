@@ -18,14 +18,14 @@ export default function Todos() {
   const [title, setTitle] = useState<any>("")
 
   const getTodos = () => {
-    axios.get('http://localhost:8080/todos')
+    axios.get('http://localhost/todos')
       .then((response: { data: any; }) => {
         setTodos(response.data);
       });
   }
 
   const registerTodo = () => {
-    axios.post('http://localhost:8080/todos', { title })
+    axios.post('http://localhost/todos', { title })
       .then((response: { data: any; }) => {
         setTitle("")
         getTodos()
@@ -33,14 +33,14 @@ export default function Todos() {
   }
 
   const changeTodoDoneFlag = (id: any, done_flag: any) => {
-    axios.put(`http://localhost:8080/todos/${id}/change_done_flag`, { done_flag })
+    axios.put(`http://localhost/todos/${id}/change_done_flag`, { done_flag })
       .then((response: { data: any; }) => {
         getTodos()
       });
   }
 
   const deleteTodo = (id: any) => {
-    axios.delete(`http://localhost:8080/todos/${id}`)
+    axios.delete(`http://localhost/todos/${id}`)
       .then((response: { data: any; }) => {
         getTodos()
       });
